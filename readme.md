@@ -131,5 +131,3 @@ plot(allEffects(hyp.out))
 
 
 
-
-
