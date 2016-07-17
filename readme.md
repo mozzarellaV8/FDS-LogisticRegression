@@ -67,6 +67,7 @@ hyp.out.tab
     	sleep       0.99298892 0.0016397197  -4.290841 1.779981e-05
     	bmi         1.01874523 0.0009510828  19.526906 6.485172e-85
 
+What we did here was raise _e_ (base of natural logarithm) to the power of our estimate for `age_p` - e^0.0606. 
 
 Now we have `age_p` with a more relatable estimate value of 1.06 - it could be said that with every year of age, the probability of a hypertension diagnosis goes up by a factor or 1. 
 
