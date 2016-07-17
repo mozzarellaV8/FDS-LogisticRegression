@@ -17,6 +17,7 @@
 
 NH11 <- readRDS("data/NatHealth2011.rds")
 labs <- attributes(NH11)$labels
+str(NH11)
 
 # clean factors ---------------------------------------------------------------
 
