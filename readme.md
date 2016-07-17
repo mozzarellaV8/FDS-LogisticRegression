@@ -15,7 +15,7 @@ labs <- attributes(NH11)$labels
 Using data from the National Health Institute Survey, we'll fit and analyze a model to estimates the probability of a person being diagnosed with hyptension based on their age, sex, hours of sleep, and body mass index.
 
 ![NatHealth11](plots/NH11-glimpse.png)
-![attributes](plot/NH11-attributes.png)
+![attributes](plots/NH11-attributes.png)
 
 ```r
 str(NH11$hypev)
@@ -73,7 +73,7 @@ After tranforming the *log odds* into *odds* by raising the natural log to the c
 
 _"How much more likely is a 63 year old female to have hypertension compared to a 33 year old female?"_
 
-To answer, we'd create a dataset with predictors set at desired levels - which are: ages 33 and 63 (1st and 3rd quantiles of the `age_p` variable coincidentally), `sex` as female, and the mean values of `bmi` and `sleep` across the dataset.
+To answer, we'd create a dataset with predictors set at desired levels - which are: ages 33 and 63 (1st and 3rd quantiles of the `age_p` variable coincidentally), `sex` as female, and the respective mean values of `bmi` and `sleep` across the dataset.
 
 ``` r
 predData <- with(NH11,
@@ -87,7 +87,7 @@ predData <- with(NH11,
 	1    33 2 Female 29.89565 7.86221
 	2    63 2 Female 29.89565 7.86221
 
-With this data, we'll bind our prediction directly to new frame for comparison and plotting.
+With this data, we'll bind our prediction directly to the new frame for comparison and plotting.
 
 ``` r
 cbind(predData, predict(hyp.out, type = "response",
