@@ -3,7 +3,7 @@ Logistic Regression - tutorial
 
 _student work in R_ via the [Harvard Statistical Software Workshop](http://tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.html#orgheadline27). 
 
-#### 'Regression with Binary Outcomes'
+## 'Regression with Binary Outcomes'
 
 In R, `lm()` works wonderfully for continuous, dependent variables; but that is what it's limited to. `glm()` (generalized linear models) are able to fit models to categorical dependent variables.
 
@@ -14,14 +14,17 @@ labs <- attributes(NH11)$labels
 
 Using data from the National Health Institute Survey, we'll fit and analyze a model to estimates the probability of a person being diagnosed with hyptension based on their age, sex, hours of sleep, and body mass index.
 
+Here is a glimpse of the structure of the data, and details on variable attributes:
+
 ![NatHealth11](plots/NH11-glimpse.png)
 ![attributes](plots/NH11-attributes.png)
 
 ```r
 str(NH11$hypev)
 levels(NH11$hypev)
+```
 
-#### Regression Model
+###Regression Model
 
 
 ``` r
@@ -67,7 +70,7 @@ hyp.out.tab
 
 Now we have `age_p` with a more relatable estimate value of 1.06 - it could be said that with every year of age, the probability of a hypertension diagnosis goes up by a factor or 1. 
 
-#### Generating Predicted Values 
+## Generating Predicted Values 
 
 After tranforming the *log odds* into *odds* by raising the natural log to the coefficient - we can now use the `predict()` function to make direct statements about the predictors in our model. An example question could be: 
 
@@ -101,14 +104,14 @@ cbind(predData, predict(hyp.out, type = "response",
 
 From the `fit` variable, we can see that a 33 year old female has a 13% probability of having been diagnosed with hypertension - while a 63 year old woman has a 48% probability of such. 
 
-#### Zelig package - Computing and Graphing Predicted Values
+## Zelig package - Computing and Graphing Predicted Values
 
 ``` r
 library(effects)
 plot(allEffects(hyp.out))
 ```
 
-#### Questions
+## Questions
 
 - Comparison to a baseline model - only necessary when making predictions from samples?
 
