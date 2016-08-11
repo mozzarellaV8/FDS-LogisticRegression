@@ -92,3 +92,6 @@ library(effects)
 data.frame(Effect("r_maritl", mod.wk.age.mar))
 plot(allEffects(mod.wk.age.mar))
 
+
+library(boot)
+MSE_10Fold <- cv.glm(NH11, mod.wk.age.mar, K = 10)$delta[1]
