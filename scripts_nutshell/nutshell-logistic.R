@@ -77,4 +77,3 @@ lines(15:65, fg.prob(15:65), new = TRUE)
 
 
 
-
