@@ -33,14 +33,10 @@ summary(NH11$everwrk)
 summary(NH11$r_maritl)
 levels(NH11$r_maritl)
 
-# this isn't needed, and probably doesn't work
-# NH11$marital <- ifelse(grepl(pattern = "Married -", x = NH11$r_maritl), 
-#                        "1 Married", "2 Unmarried")
+# regression model ------------------------------------------------------------
 
-NH11$marital <- as.factor(NH11$marital)
-levels(NH11$marital)
-
-# run regression model --------------------------------------------------------
+# can we predict if someone has ever worked given their age and marital status? 
+# and what is the probability for working for each level of marital status?
 everwork.out <- glm(everwrk ~ age_p + r_maritl, data = NH11, family = "binomial")
 coef(summary(everwork.out))
 
@@ -59,8 +55,8 @@ coef(summary(everwork.out))
 # r_maritl8 Living with partner                0.44358296 0.137769623  3.2197443 1.283050e-03
 # r_maritl9 Unknown marital status            -0.39547953 0.492966577 -0.8022441 4.224118e-01
 
-work.out.table <- coef(summary(everwork.out))
-work.out.table[, "Estimate"] <- exp(coef(everwork.out))
+work.out.table <- coef(summary(everwork.out)) # new table for log transformed values.
+work.out.table[, "Estimate"] <- exp(coef(everwork.out)) # apply log transform to read coef.
 work.out.table
 
 # (Intercept)                                 1.5530917 0.093537691  4.7066328 2.518419e-06
@@ -78,18 +74,39 @@ work.out.table
 nh11.wrk.age.mar <- subset(NH11, select = c("everwrk", "age_p", "r_maritl"))
 summary(nh11.wrk.age.mar)
 
-NH11 <- transform(NH11,
-                  everwrk = factor(everwrk,
-                                   levels = c("1 Yes", "2 No")),
+# transform everworked into binary and drop levels on marital status.
+# droplevels() usually used for subsets - so we don't include levels 
+# from the population that aren't within the subset.
+NH11 <- transform(NH11, everwrk = factor(everwrk, levels = c("1 Yes", "2 No")),
                   r_maritl = droplevels(r_maritl))
 
 mod.wk.age.mar <- glm(everwrk ~ age_p + r_maritl, data = NH11,
                       family = "binomial")
 
 summary(mod.wk.age.mar)
+mod.wk.age.mar_TBL <- coef(summary(mod.wk.age.mar))
+mod.wk.age.mar_TBL[, "Estimate"] <- exp(coef(mod.wk.age.mar))
+mod.wk.age.mar_TBL
+
+#                                             Estimate  Std. Error    z value   Pr(>|z|)
+# (Intercept)                                 0.6438770 0.093537691  -4.7066328 2.518419e-06
+# age_p                                       0.9706278 0.001645433 -18.1181481 2.291800e-73
+# r_maritl2 Married - spouse not in household 1.0509300 0.217309587   0.2285932 8.191851e-01
+# r_maritl4 Widowed                           1.9810316 0.084335382   8.1059419 5.233844e-16
+# r_maritl5 Divorced                          0.4818536 0.111680788  -6.5375152 6.254929e-11
+# r_maritl6 Separated                         0.8797735 0.151366140  -0.8462316 3.974236e-01
+# r_maritl7 Never married                     1.4100296 0.069222260   4.9638756 6.910023e-07
+# r_maritl8 Living with partner               0.6417330 0.137769623  -3.2197443 1.283050e-03
+# r_maritl9 Unknown marital status            1.4850962 0.492966577   0.8022441 4.224118e-01
+
+mod.wk.age.mar_TBL <- as.data.frame(mod.wk.age.mar_TBL)
+mod.wk.age.mar_TBL <- mod.wk.age.mar_TBL[order(sort(mod.wk.age.mar_TBL$Estimate, decreasing = T)),]
+mod.wk.age.mar_TBL
+
+# prediction for levels of marital status -------------------------------------
 
 library(effects)
-data.frame(Effect("r_maritl", mod.wk.age.mar))
+predMar <- data.frame(Effect("r_maritl", mod.wk.age.mar))
 plot(allEffects(mod.wk.age.mar))
 
 
