@@ -165,3 +165,4 @@ confint.default(logit01)
 
 
 
+
