@@ -99,11 +99,11 @@ summary(logit01)
 Although I've already got the model output above, will use `tidy()` from the `broom` package to get a cleaner look at output. It's generally clear but just to make the translation from base R to tidy output explicit:
 
 - **Pr(>|z|)** is **p.value**
-- **z value** is **statistic**
+- **z value** is **statistic** and is sometimes called the **Wald z-statistic**
 - **Std. Error** is **std.error**
 - **Estimate** is **estimate**
 
-What we lose in significance codes we gain in clarity. 
+What we lose in significance codes we gain in dataframe-ready output clarity: 
 
 ```{R}
 tidy(logit01)
@@ -115,6 +115,48 @@ tidy(logit01)
 # 5       rank3 -1.340203916 0.345306418 -3.881202 0.0001039415
 # 6       rank4 -1.551463677 0.417831633 -3.713131 0.0002047107
 ```
+
+For every one unit increase in the predictor variables, the coefficients give the change in _log odds_ for the outcome. 
+
+About the _log odds_: they're the _logit_, which is the _link function_ that relates the independent variables to the **binary** outcome variable. Being binary, the outcome variable should essentially follow a **Bernoullli distribution** - which is a special case of the Binomial distribution where _n_ = 1 (a single trial with success/failure, 0/1, admit/not admit).
+
+Looking at our specific model here:
+
+- for every one unit change in GRE score, the log odds of successful admission (1) increases by 0.002. This is derived from the coefficient **estimate**.
+- for every one unit increase in `gpa`, the log odds of admission increase by 0.804 - again from the **estimate**
+- `rank` is categorical, and the 3 terms output are to be interpreted against the `rank1`. So - if one attended a `rank2` university, the log odds of being admitted to grad school decrease by 0.675.
+
+### Confidence Intervals
+
+Using `confint()`, we can get confidence intervals for the coefficient estimates. These are based on the 'profiled log-likelihood function' (TODO: look this up). 
+
+```{R}
+confint(logit01)
+# Waiting for profiling to be done...
+#                       2.5 %       97.5 %
+# (Intercept)   -6.2716202334 -1.792547080
+# gre            0.0001375921  0.004435874
+# gpa            0.1602959439  1.464142727
+# rank2         -1.3008888002 -0.056745722
+# rank3         -2.0276713127 -0.670372346
+# rank4         -2.4000265384 -0.753542605
+
+# CIs with standard errors
+confint.default(logit01)
+#                     2.5 %       97.5 %
+# (Intercept) -6.2242418514 -1.755716295
+# gre          0.0001202298  0.004408622
+# gpa          0.1536836760  1.454391423
+# rank2       -1.2957512650 -0.055134591
+# rank3       -2.0169920597 -0.663415773
+# rank4       -2.3703986294 -0.732528724
+```
+
+
+
+
+
+
 
 
 
