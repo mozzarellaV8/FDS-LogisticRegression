@@ -99,9 +99,9 @@ summary(logit01)
 Although I've already got the model output above, will use `tidy()` from the `broom` package to get a cleaner look at output. It's generally clear but just to make the translation from base R to tidy output explicit:
 
 - **Pr(>|z|)** is **p.value**
-- **z value** is **statistic
-- **Std. Error** is **std.error
-- **Estimate** is **estimate
+- **z value** is **statistic**
+- **Std. Error** is **std.error**
+- **Estimate** is **estimate**
 
 What we lose in significance codes we gain in clarity. 
 
