@@ -1,7 +1,9 @@
 Logistic Regression - tutorial
 ------------------------------
 
-_student work in R_ via the [Harvard Statistical Software Workshop](http://tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.html#orgheadline27). 
+_student work in R_ via the [Harvard Statistical Software Workshop](http://tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.html#orgheadline27); part of the curriculum for [Foundations of Data Science](https://www.springboard.com/workshops/data-science).
+
+Additionally: more logistic regression examples will be added to this repository over time.
 
 - [Regression with Binary Outcomes](#regression-with-binary-outcomes)
 - [Regression Model](#regression-model)
@@ -10,7 +12,8 @@ _student work in R_ via the [Harvard Statistical Software Workshop](http://tutor
 - [Zelig Library](#zelig-package---computing-and-graphing-predicted-values)
 - [Questions](#questions)
 
-## 'Regression with Binary Outcomes'
+
+## Regression with Binary Outcomes
 
 In R, `lm()` works wonderfully for continuous, dependent variables; but that is what it's limited to. `glm()` (generalized linear models) are able to fit models to categorical dependent variables.
 
