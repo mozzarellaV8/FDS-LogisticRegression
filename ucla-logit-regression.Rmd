@@ -1,0 +1,214 @@
+---
+title: "Predicting Gradaute School Admissions"
+output: html_notebook
+---
+_a **logistic regression** exercise_ from [UCLA](http://www.ats.ucla.edu/stat/r/dae/logit.htm) Institute of Digital Research and Education. The [data](http://www.ats.ucla.edu/stat/data/binary.csv) was also downloaded from UCLA.
+
+This exercise takes a look at how certain variables play a role in whether or not an applicant is accepted to graduate school. 
+
+## Exploratory Look
+
+```{r}
+library(aod)
+library(ggplot2)
+library(Rcpp)
+
+grad <- read.csv("data/binary.csv")
+str(grad)
+```
+
+So! There's four variables:
+
+- `admit` - the outcome variable with values of 1 - admitted and 0 - not admitted
+- `gre`   - score on the GRE exam
+- `gpa`   - undergraduate GPA
+- `rank`  - 'prestige' of undergraduate institution; 1 being the highest, and 4 the lowest.
+
+```{R}
+summary(grad)
+```
+
+800 is the highest possible score on the GRE; 4.0 is that for GPA. 
+
+```{R}
+head(grad)
+```
+
+In the third row we see a perfect score on the GRE and perfect GPA, coming from a university of highest prestige. This candidate was admitted to graduate school.
+
+On rows 11 and 19, what seem to be desirable marks don't add up to successful admission.
+
+```{r}
+grad[10:20, ]
+```
+
+Perfect GRE and GPA, but from a school ranked 4 does not lead to admission. Neither does a perfect GRE score combined with 3.75 GPA from a school within the 2nd highest prestige bracket. While these scores were likely above the grad school's cutoff, they still didn't garner admission.
+
+How spread out are the values across variables? We saw min/max in the summary, but what about standard deviation across the board?
+
+```{r}
+sapply(grad, sd)
+```
+
+Cross Tab for independence:
+```{r}
+xtabs(~ admit + rank, data = grad)
+```
+
+Convert `rank` to factor:
+```{r}
+grad$rank <- factor(grad$rank)
+```
+
+
+Model:
+```{R}
+logit <- glm(admit ~ gre + gpa + rank, data = grad, family = "binomial")
+summary(logit)
+```
+
+
+
+
+Model outputs in tidy format:
+```{r}
+tidy(logit)
+```
+
+
+
+### Confidence Intervals
+
+Confidence Intervals with log-likelihood function:
+```{r}
+confint(logit)
+```
+
+Confidence Intervals with standard errors:
+```{R}
+confint(logit)
+```
+
+### Wald Test
+
+The `wald.test()` function from the `aod` library can be used to test the overall effect of `rank`. The `wald.test` fucntion refers to coefficients by their order in the model. The arguments are 
+
+- `b`     - supplies the coefficients 
+- `Sigma` - supples the variance-covariance matrix of error terms
+- `Terms` - specify which terms in the model are to be tested.
+
+```{r}
+wald.test(b = coef(logit), Sigma = vcov(logit), Terms = 4:6)
+```
+
+The chi-squared test statistic of 20.9 on 3 degrees of freedom is associated with a p-value of 0.00011, indicated statistical significance.
+
+Is the coefficient for rank = 2 equal to that of rank = 3? 
+
+We find out by looking at the difference between the terms for rank=2 and rank=3.
+
+To look at these specific terms, a vector is defined whose number of values matches the number of terms in the model. rank=2 and rank=3 are the 4th and 5th terms of the model; these are contrasted by multiplying one by 1, and the other by -1. Since the other terms of the model are not involved, they are multiplied by 0. 
+
+`L` is used in place of `Terms` as the third argument because we want to base this test on the vector we've just defined as `one`.
+
+```{r}
+one <- cbind(0, 0, 0, 1, -1, 0)
+wald.test(b = coef(logit), Sigma = vcov(logit), L = one)
+```
+
+The chi-squared test statistic of 5.5 on 1 degree of freedom is associated with a p-value of 0.019 - indicating the difference between coefficients is statistically significant.
+
+### Odds Ratios
+
+```{R}
+exp(coef(logit))
+```
+
+Odds Ratios with 95% CI:
+```{R}
+exp(cbind(odds = coef(logit), confint(logit)))
+```
+
+Now that the coefficients have been exponentiated, they are a bit more easily interpreted. E.g., for every one unit increase in `gpa`, the odds of being admitted increase by a factor of 2.23. Odds appear to remain roughly the same for a one unit increase or decrease in `gre` score.
+
+tidy output:
+```{r}
+augment(logit)
+```
+
+### Predictions
+
+Prediction in this case is useful in helping to udnerstand the model. Predictions can be computed for both categorical and continuous variables. 
+
+First to create some new data based on mean values of our independent variables:
+```{R}
+
+# generate new data based on means
+newdata01 <- with(grad,
+                data.frame(gre = mean(gre), gpa = mean(gpa), rank = factor(1:4)))
+
+# take a look at new data
+newdata01
+```
+
+It's important to maintain the same variable names as from our original dataset. From here, we can generate and add predicted values to the newdata01 dataframe.
+
+
+```{R}
+# generate and add predicted values to dataframe
+newdata01$rankP <- predict(logit, newdata = newdata01, type = "response")
+newdata01
+```
+
+So it would appear that the probability to be accepted to grad school coming from the highest prestige school is about 0.52, while if coming from the lowest prestige school it'd be 0.18 - with gre score and gpa held at the mean. 
+
+We can create more new data to look at a table of predicted probabilities for `rank` and `gre`. For this we'll create 100 new values for `gre` between 200 and 800, and have our `rank` continue to vary from 1 to 4. 
+
+```{R}
+newdata02 <- with(grad,
+                  data.frame(gre = rep(seq(200, 800, length.out = 100), 4),
+                             gpa = mean(gpa), 
+                             rank = factor(rep(1:4, each = 100))))
+
+newdata02
+```
+
+
+
+```{R}
+newdata03 <- cbind(newdata02, predict(logit, newdata = newdata02, type = "link", se = T))
+newdata03 <- within(newdata03, {
+  PredictedProb <- plogis(fit)
+  LL <- plogis(fit - (1.96 * se.fit))
+  UL <- plogis(fit + (1.96 * se.fit))
+})
+
+head(newdata03)
+newdata03[32:40, ]
+```
+
+Let's look at what the scores are with highest probabilities
+
+```{R}
+highest <- newdata03[order(sort(newdata03$PredictedProb, decreasing = T)), ]
+head(highest)
+```
+
+Now to look at a plot of the predicted probabilities by `rank`, along with lower and upper limits:
+```{R}
+pp <- ggplot(newdata03, aes(gre, PredictedProb)) +
+  geom_ribbon(aes(ymin = LL, ymax = UL, fill = rank), alpha = 0.25) +
+  geom_line(aes(color = rank), size = 1) +
+  theme_minimal(base_size = 12, base_family = "GillSans") +
+  theme(axis.title.y = element_text(margin = margin(0, 20, 0, 0)),
+        axis.title.x = element_text(margin = margin(20, 0, 0, 0)),
+        plot.margin = unit(c(1, 1, 1, 1), "cm")) +
+  labs(y = "predicted probabilities", x = "GRE score",
+       title = "Predicted Probabilities of Graduate School Acceptance ~ GRE score + school rank")
+
+pp
+```
+
+
+
+
