@@ -123,7 +123,7 @@ ggplot(prostate, aes(status, sz)) +
 
 ```
 
-![03](03-StatusTumor-Boxplot.png)
+![03](plots/03-StatusTumor-Boxplot.png)
 
 - the mean values for tumor size appear to show less variance across the status categories.
 - while the highest mean is associated with prostatic cancer death, the next highest is associated with unspecified non-cancer deaths.
@@ -145,7 +145,7 @@ ggplot(prostate, aes(wt)) +
 
 ```
 
-![04](04-StatusWeight-FacetHist.png)
+![04](plots/04-StatusWeight-FacetHist.png)
 
 Age and Weight across the Patient Status categories:
 
@@ -167,7 +167,7 @@ ggplot(prostate, aes(age, wt)) +
   
 ```  
 
-![06](06-StatusAgeWeightPF-FacetScatter.png)
+![06](plots/06-StatusAgeWeightPF-FacetScatter.png)
 
 There are categorical variables that might be of interest `ekg`, `pf`, `status` - how do they interact?
 Do physical fitness and ekg readings have any relationship in terms of patient status? 
@@ -191,7 +191,7 @@ ggplot(prostate, aes(ekg, status, fill = pf)) +
 
 ```
 
-![07](07-StatusEkgPf-heat.png)
+![07](plots/07-StatusEkgPf-heat.png)
 
 Nonetheless, EKG readings will come up later in the data transformations; how does this categorical interact with patient status and number of follow-up visits?
 
@@ -215,7 +215,7 @@ ggplot(prostate, aes(dtime, status, fill = ekg)) +
 
 ```
 
-![08](08-StatusEkgFollowUp-Heat.png)
+![08](plots/08-StatusEkgFollowUp-Heat.png)
 
 loose observations:
 
