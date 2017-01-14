@@ -1,4 +1,4 @@
-# notes on Binary Logistic Regression
+# notes on Binary Logistic Regression - RMS/Harrell
 
 This is a workthrough of chapter 11 of the book [Regression Modeling Strategies](http://biostat.mc.vanderbilt.edu/wiki/Main/RmsShortAdd) by Frank E. Harrell. 
 
@@ -14,13 +14,48 @@ library(rms)
 getHdata(prostate)
 ```
 
-# Simple Questions and Exploratory Plots
+## Simple Questions and Exploratory Plots
 
 ```{r, message=FALSE}
 library(rms)
 getHdata(prostate)
+
 summary(prostate)
+#     patno           stage                     rx          dtime      
+# Min.   :  1.0   Min.   :3.000   placebo        :127   Min.   : 0.00  
+# 1st Qu.:126.2   1st Qu.:3.000   0.2 mg estrogen:124   1st Qu.:14.25  
+# Median :251.5   Median :3.000   1.0 mg estrogen:126   Median :34.00  
+# Mean   :251.7   Mean   :3.424   5.0 mg estrogen:125   Mean   :36.13  
+# 3rd Qu.:376.8   3rd Qu.:4.000                         3rd Qu.:57.75  
+# Max.   :506.0   Max.   :4.000                         Max.   :76.00  
+                                                                      
+#                          status         age              wt                            pf     
+# alive                       :148   Min.   :48.00   Min.   : 69.00   normal activity     :450  
+# dead - prostatic ca         :130   1st Qu.:70.00   1st Qu.: 90.00   in bed < 50% daytime: 37  
+# dead - heart or vascular    : 96   Median :73.00   Median : 98.00   in bed > 50% daytime: 13  
+# dead - cerebrovascular      : 31   Mean   :71.46   Mean   : 99.03   confined to bed     :  2  
+# dead - other specific non-ca: 28   3rd Qu.:76.00   3rd Qu.:107.00                             
+# dead - other ca             : 25   Max.   :89.00   Max.   :152.00                             
+# (Other)                     : 44   NA's   :1       NA's   :2                                  
+#       hx              sbp             dbp                                        ekg     
+# Min.   :0.0000   Min.   : 8.00   Min.   : 4.000   normal                           :168  
+# 1st Qu.:0.0000   1st Qu.:13.00   1st Qu.: 7.000   heart strain                     :150  
+# Median :0.0000   Median :14.00   Median : 8.000   old MI                           : 75  
+# Mean   :0.4243   Mean   :14.35   Mean   : 8.149   rhythmic disturb & electrolyte ch: 51  
+# 3rd Qu.:1.0000   3rd Qu.:16.00   3rd Qu.: 9.000   heart block or conduction def    : 26  
+# Max.   :1.0000   Max.   :30.00   Max.   :18.000   (Other)                          : 24  
+#                                                   NA's                             :  8  
+#       hg               sz              sg              ap                bm             sdate     
+# Min.   : 5.899   Min.   : 0.00   Min.   : 5.00   Min.   :  0.100   Min.   :0.0000   Min.   :2652  
+# 1st Qu.:12.299   1st Qu.: 5.00   1st Qu.: 9.00   1st Qu.:  0.500   1st Qu.:0.0000   1st Qu.:2860  
+# Median :13.699   Median :11.00   Median :10.00   Median :  0.700   Median :0.0000   Median :3021  
+# Mean   :13.446   Mean   :14.63   Mean   :10.31   Mean   : 12.176   Mean   :0.1633   Mean   :3039  
+# 3rd Qu.:14.699   3rd Qu.:21.00   3rd Qu.:11.00   3rd Qu.:  2.975   3rd Qu.:0.0000   3rd Qu.:3204  
+# Max.   :21.199   Max.   :69.00   Max.   :15.00   Max.   :999.875   Max.   :1.0000   Max.   :3465  
+#                  NA's   :5       NA's   :11                                                
+
 ```
+Overall, there are 502 observations of 18 variables - quantitative, categorical, and even one that might be considered ordinal. Quite a bit to take in. 
 
 Just to get a sense of things visually beyond the summary, I'm going to do a couple of quick plots before going through the textbook code. 
 
