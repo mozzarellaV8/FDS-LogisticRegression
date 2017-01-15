@@ -2,7 +2,7 @@
 
 This is a workthrough of chapter 11 of the book [Regression Modeling Strategies](http://biostat.mc.vanderbilt.edu/wiki/Main/RmsShortAdd) by Frank E. Harrell. 
 
-It's simply following the reading, taking notes, and running the code - with a few very slight additions of my own. These additions are generally to help me understand the dataset (e.g. exploratory plots). 
+It's simply following the reading, taking notes, and running the code - with a few very slight additions of my own. These additions are generally to help me understand the dataset (i.e. exploratory plots). 
 
 The goal of the case study is to fit a binary logistic regression model that predicts cardio- and cerebro-vascular death among prostate cancer patients, using a dataset containing variables on patient baselines (weight, age, blood pressure), treatments, and time of death. 
 
